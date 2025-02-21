@@ -53,7 +53,7 @@ const Register = () => {
             <div className="sm:w-full md:w-1/2">
               <input
                 type="text"
-                className="border rounded-lg p-3 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="border rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 name="firstName"
                 id='firstName'
                 value={firstName}
@@ -64,7 +64,7 @@ const Register = () => {
             <div className="sm:w-full md:w-1/2">
               <input
                 type="text"
-                className="border rounded-lg p-3 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="border rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 name="surname"
                 id='surname'
                 value={surname}
@@ -77,7 +77,7 @@ const Register = () => {
           <div>
             <input
               type="text"
-              className="border rounded-lg p-3 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="border rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
               name="phoneNumber"
               id='phoneNumber'
               value={phoneNumber}
@@ -89,7 +89,7 @@ const Register = () => {
           <div>
             <input
               type="email"
-              className="border rounded-lg p-3 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="border rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
               name="email"
               id='email'
               value={email}
@@ -101,7 +101,7 @@ const Register = () => {
           <div>
             <input
               type="password"
-              className="border rounded-lg p-3 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="border rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
               name="password"
               id='password'
               value={password}
