@@ -12,11 +12,16 @@ const Profile = () => {
     avatar: "https://via.placeholder.com/100",
     links: [
       { title: "Website", url: "https://startyourhustle.com" },
-      { title: "YouTube", url: "https://youtube.com" },
-      { title: "Instagram", url: "https://instagram.com" },
-      { title: "Twitter", url: "https://twitter.com" },
-      { title: "LinkedIn", url: "https://linkedin.com" },
+      { title: "Consultation (Coming soon)", url: "https://miranda-fitness.onrender.com" },
     ],
+    socialMedia: [
+        { title: "YouTube", url: "https://youtube.com" },
+        { title: "Instagram", url: "https://instagram.com/miranda_leigh_ghidari" },
+        { title: "Twitter", url: "https://twitter.com" },
+        { title: "LinkedIn", url: "https://linkedin.com" },
+        { title: "TikTok", url: "https://tiktok.com" },
+  
+    ]
 };
 
 
@@ -48,6 +53,35 @@ const Profile = () => {
           </div>
         </div>
 
+        {/* Socials */}
+        <div className="mt-4 flex justify-between">
+          {user.socialMedia.map((link, index) => {
+            // Extract platform name from the URL or title
+            const platformName = Object.keys(iconMap).find(key =>
+              link.url.toLowerCase().includes(key)
+            ) || "website"; // Default to "website" if no match
+            
+            const Icon = iconMap[platformName]; // Get corresponding icon
+
+            return (
+                <a
+                key={index}
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white bg-blue-600 hover:bg-blue-700 font-semibold py-4 px-4 rounded-full transition duration-300"
+              >
+                {/* Icon on the Left */}
+                <Icon className=" " />
+              
+                {/* Centered Text */}
+                {/* <span className="flex-1 text-center">{link.title}</span> */}
+              </a>
+              
+            );
+          })}
+        </div>
+
         {/* Links */}
         <div className="mt-4 space-y-4">
           {user.links.map((link, index) => {
@@ -76,6 +110,7 @@ const Profile = () => {
             );
           })}
         </div>
+
       </div>
     </div>
   );
