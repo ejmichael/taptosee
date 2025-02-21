@@ -12,7 +12,7 @@ const Profile = () => {
     avatar: "https://via.placeholder.com/100",
     links: [
       { title: "Website", url: "https://startyourhustle.com" },
-      { title: "Consultation (Coming soon)", url: "https://miranda-fitness.onrender.com" },
+      { title: "Dietician (Coming soon)", url: "https://miranda-fitness.onrender.com" },
     ],
     socialMedia: [
         { title: "YouTube", url: "https://youtube.com" },
@@ -54,7 +54,7 @@ const Profile = () => {
         </div>
 
         {/* Socials */}
-        <div className="mt-4 flex justify-between">
+        <div className="mt-4 flex justify-around px-4 gap-2  flex-wrap">
           {user.socialMedia.map((link, index) => {
             // Extract platform name from the URL or title
             const platformName = Object.keys(iconMap).find(key =>
@@ -69,7 +69,7 @@ const Profile = () => {
                 href={link.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-white bg-blue-600 hover:bg-blue-700 font-semibold py-4 px-4 rounded-full transition duration-300"
+                className="text-white bg-blue-600 hover:bg-blue-700 font-semibold  md:py-4 md:px-4 p-3 rounded-full transition duration-300"
               >
                 {/* Icon on the Left */}
                 <Icon className=" " />
@@ -101,10 +101,10 @@ const Profile = () => {
                 className="relative text-lg flex items-center w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-full transition duration-300"
               >
                 {/* Icon on the Left */}
-                <Icon className="text-xl absolute left-4" />
+                <Icon className="md:text-xl absolute left-4" />
               
                 {/* Centered Text */}
-                <span className="flex-1 text-center">{link.title}</span>
+                <span className="flex-1 text-basis text-center">{link.title}</span>
               </a>
               
             );
