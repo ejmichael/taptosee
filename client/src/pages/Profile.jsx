@@ -1,28 +1,52 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { FaYoutube, FaInstagram , FaLinkedin, FaGlobe } from "react-icons/fa";
 import { FaSquareXTwitter, FaTiktok, FaFacebook   } from "react-icons/fa6";
+import axios from "axios";
 
 const Profile = () => {
   const { userId } = useParams();
 
-  const user = {
-    name: "Miranda Leigh Ghidari",
-    bio: "Fitness Coach | Certified Dietitian | Helping You Build Strength & Confidence 💪",
-    avatar: "https://via.placeholder.com/100",
-    links: [
-      { title: "Website", url: "https://startyourhustle.com" },
-      { title: "Dietician (Coming soon)", url: "https://miranda-fitness.onrender.com" },
-    ],
-    socialMedia: [
-        { title: "YouTube", url: "https://youtube.com" },
-        { title: "Instagram", url: "https://instagram.com/miranda_leigh_ghidari" },
-        { title: "Twitter", url: "https://twitter.com" },
-        { title: "LinkedIn", url: "https://linkedin.com" },
-        { title: "TikTok", url: "https://tiktok.com" },
+  const domain = window.location.href.includes('localhost') ? "http://localhost:5000" : "";
+
+    const [userData, setUserData] = useState([])
+
+//   const user = {
+//     name: "Miranda Leigh Ghidari",
+//     bio: "Fitness Coach | Certified Dietitian | Helping You Build Strength & Confidence 💪",
+//     avatar: "https://via.placeholder.com/100",
+//     links: [
+//       { title: "Website", url: "https://startyourhustle.com" },
+//       { title: "Dietician (Coming soon)", url: "https://miranda-fitness.onrender.com" },
+//     ],
+//     socialMedia: [
+//         { title: "YouTube", url: "https://youtube.com" },
+//         { title: "Instagram", url: "https://instagram.com/miranda_leigh_ghidari" },
+//         { title: "Twitter", url: "https://twitter.com" },
+//         { title: "LinkedIn", url: "https://linkedin.com" },
+//         { title: "TikTok", url: "https://tiktok.com" },
   
-    ]
-};
+//     ]
+// };
+
+useEffect(() => {
+
+    const getProfileData = async () => {
+
+        try {
+            const profileData = await axios.get(domain + '/api/user/get-user-data/' + userId)
+            console.log(profileData.data);
+            
+            setUserData(profileData.data.user)
+        } catch (error) {
+            console.error("Error fetching profile info:", error);
+        }
+
+    }
+    
+    getProfileData()
+
+}, [userId])
 
 
   // Icon Mapping
@@ -43,19 +67,19 @@ const Profile = () => {
         {/* Profile Header */}
         <div className="text-center my-10">
           <img
-            src={user.avatar}
-            alt={`${user.name}'s avatar`}
-            className="w-20 h-20 rounded-full mx-auto border-2 border-gray-300"
+            src={userData.profilePicture}
+            alt={`${userData.firstName}'s avatar`}
+            className="w-20 h-20 object-cover rounded-full mx-auto border-2 border-gray-300"
           />
           <div className="my-2">
-            <h2 className="my-2 text-xl font-semibold">{user.name}</h2>
-            <p className="text-gray-500 text-sm">{user.bio}</p>
+            <h2 className="my-2 text-xl font-semibold">{`${userData.firstName} ${userData.surname}`}</h2>
+            <p className="text-gray-500 text-sm">{userData.bio}</p>
           </div>
         </div>
 
         {/* Socials */}
         <div className="mt-4 flex justify-around px-4 gap-2  flex-wrap">
-          {user.socialMedia.map((link, index) => {
+          {userData.socialMediaLinks?.length > 0 && userData.socialMediaLinks.map((link, index) => {
             // Extract platform name from the URL or title
             const platformName = Object.keys(iconMap).find(key =>
               link.url.toLowerCase().includes(key)
@@ -84,7 +108,7 @@ const Profile = () => {
 
         {/* Links */}
         <div className="mt-4 space-y-4">
-          {user.links.map((link, index) => {
+          {userData.links && userData.links.map((link, index) => {
             // Extract platform name from the URL or title
             const platformName = Object.keys(iconMap).find(key =>
               link.url.toLowerCase().includes(key)
