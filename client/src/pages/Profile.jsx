@@ -67,7 +67,7 @@ useEffect(() => {
         {/* Profile Header */}
         <div className="text-center my-10">
           <img
-            src={userData.profilePicture}
+            src={userData.profilePicture ? userData.profilePicture : ""}
             alt={`${userData.firstName}'s avatar`}
             className="w-20 h-20 object-cover rounded-full mx-auto border-2 border-gray-300"
           />
