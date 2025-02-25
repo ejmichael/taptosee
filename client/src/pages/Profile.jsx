@@ -9,7 +9,7 @@ const Profile = () => {
 
   const domain = window.location.href.includes('localhost') ? "http://localhost:5000" : "https://taptosee-backend.onrender.com";
 
-    const [userData, setUserData] = useState([])
+    const [userData, setUserData] = useState(null)
 
 //   const user = {
 //     name: "Miranda Leigh Ghidari",
@@ -67,22 +67,22 @@ useEffect(() => {
         {/* Profile Header */}
         <div className="text-center my-10">
           <img
-            src={userData.profilePicture ? userData.profilePicture : "https://via.placeholder.com/150"}
-            alt={`${userData.firstName}'s avatar`}
+            src={userData?.profilePicture || "https://via.placeholder.com/150"}
+            alt={`${userData?.firstName}'s avatar`}
             className="w-20 h-20 object-cover rounded-full mx-auto border-2 border-gray-300"
           />
           <div className="my-2">
-            <h2 className="my-2 text-xl font-semibold">{`${userData.firstName} ${userData.surname}`}</h2>
-            <p className="text-gray-500 text-sm">{userData.bio}</p>
+            <h2 className="my-2 text-xl font-semibold">{`${userData?.firstName} ${userData?.surname}`}</h2>
+            <p className="text-gray-500 text-sm">{userData?.bio}</p>
           </div>
         </div>
 
         {/* Socials */}
         <div className="mt-4 flex justify-around px-4 gap-2  flex-wrap">
-          {userData.socialMediaLinks?.length > 0 && userData.socialMediaLinks.map((link, index) => {
+          {userData?.socialMediaLinks?.map((link, index) => {
             // Extract platform name from the URL or title
             const platformName = Object.keys(iconMap).find(key =>
-              link.url.toLowerCase().includes(key)
+              link?.title?.includes(key)
             ) || "website"; // Default to "website" if no match
             
             const Icon = iconMap[platformName]; // Get corresponding icon
@@ -90,7 +90,7 @@ useEffect(() => {
             return (
                 <a
                 key={index}
-                href={link.url}
+                href={link?.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-white bg-blue-600 hover:bg-blue-700 font-semibold  md:py-4 md:px-4 p-3 rounded-full transition duration-300"
@@ -108,7 +108,7 @@ useEffect(() => {
 
         {/* Links */}
         <div className="mt-4 space-y-4">
-          {userData.links && userData.links.map((link, index) => {
+          {userData?.links?.map((link, index) => {
             // Extract platform name from the URL or title
             const platformName = Object.keys(iconMap).find(key =>
               link.url.toLowerCase().includes(key)
