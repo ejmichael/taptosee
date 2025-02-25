@@ -46,7 +46,7 @@ useEffect(() => {
     
     getProfileData()
 
-}, [userId])
+}, [username])
 
 
   // Icon Mapping
