@@ -7,7 +7,7 @@ import axios from "axios";
 const Profile = () => {
   const { userId } = useParams();
 
-  const domain = window.location.href.includes('localhost') ? "http://localhost:5000" : "";
+  const domain = window.location.href.includes('localhost') ? "http://localhost:5000" : "https://taptosee-backend.onrender.com";
 
     const [userData, setUserData] = useState([])
 
@@ -67,7 +67,7 @@ useEffect(() => {
         {/* Profile Header */}
         <div className="text-center my-10">
           <img
-            src={userData.profilePicture ? userData.profilePicture : ""}
+            src={userData.profilePicture ? userData.profilePicture : null}
             alt={`${userData.firstName}'s avatar`}
             className="w-20 h-20 object-cover rounded-full mx-auto border-2 border-gray-300"
           />
