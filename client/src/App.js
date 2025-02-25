@@ -8,9 +8,6 @@ import Navbar from './components/Navbar';
 function App() {
   return (
     <div className="App text-2xl">
-      <div>
-        <Navbar/>
-      </div>
       <Routes>
         <Route exact path='/' element={<Home/>}/>
         <Route path='/:userId' element={<Profile/>}/>

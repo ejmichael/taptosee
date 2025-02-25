@@ -10,6 +10,7 @@ const Register = () => {
 
   const [profilePicture, setProfilePicture] = useState(null);
   const [imageURL, setImageURL] = useState("");
+  const [loading, setLoading] = useState(false);
 
     // Icon Mapping
     const iconMap = [
@@ -29,13 +30,15 @@ const Register = () => {
     firstName: '',
     surname: '',
     emailAddress: '',
+    username: '',
     phoneNumber: '',
     password: '',
     bio: '',
     links: [],
-    socialMediaLinks: [],
+    socialMediaLinks: iconMap.map(({ key }) => ({ title: key, url: "" })), // Initialize with icons
     profilePicture: null
   });
+  
 
   console.log(formData);
   
@@ -50,8 +53,6 @@ const Register = () => {
   };
 
 
-
-
   const handleLinkChange = (index, field, value) => {
     const updatedLinks = [...formData.links];
     updatedLinks[index][field] = value; // Update the correct field (title or url)
@@ -61,22 +62,28 @@ const Register = () => {
     }));
   };
   
-
-// Function to handle social media link changes
-const handleSocialMediaLinkChange = (index, value) => {
+  const handleSocialMediaLinkChange = (index, key, value) => {
     setFormData((prevState) => {
-        const updatedLinks = [...prevState.socialMediaLinks];
-
-        // Ensure index exists before updating
-        if (!updatedLinks[index]) {
-            updatedLinks[index] = { title: iconMap[index].key, url: value };
-        } else {
-            updatedLinks[index].url = value;
-        }
-
-        return { ...prevState, socialMediaLinks: updatedLinks };
+      // Ensure that the socialMediaLinks array is updated correctly
+      const updatedLinks = [...prevState.socialMediaLinks];
+  
+      // Check if the object at the given index exists, if not, initialize it
+      if (!updatedLinks[index]) {
+        updatedLinks[index] = { title: key, url: value.trim() }; // Add the new object
+      } else {
+        updatedLinks[index].url = value.trim(); // Update the URL
+      }
+  
+      // If the URL is empty, remove that link from the array
+      if (updatedLinks[index].url === "") {
+        updatedLinks.splice(index, 1);
+      }
+  
+      return { ...prevState, socialMediaLinks: updatedLinks };
     });
-};
+  };
+ 
+
 
 const handleAddLink = () => {
     setFormData(prevState => ({
@@ -119,27 +126,37 @@ const handleImageUpload = async(e) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log(formData);
+    setLoading(true);
+
+    const filteredLinks = formData.socialMediaLinks.filter(link => link.url.trim() !== "");
+
+    console.log("Submitting data:", { ...formData, socialMediaLinks: filteredLinks });
     
 
     if (!formData.emailAddress || !formData.password) return;
+
+    const requestData = { 
+        ...formData, 
+        socialMediaLinks: filteredLinks 
+    };
     
   
     try {
-      const response = await axios.post(domain + '/api/user/create-user', formData, {
+      const response = await axios.post(domain + '/api/user/create-user', requestData, {
         headers: { 'Content-Type': 'application/json' },
       });
 
       localStorage.setItem('user', JSON.stringify(response.data.user));
     //   navigate(redirectPath, { replace: true });
       if(response.data.user) {
-        navigate('/'+ response.data.user._id)
+        navigate('/'+ response.data.user.username)
       }
 
     console.log(response.data);
     
     } catch (error) {
       console.error('Register failed', error);
+      setLoading(false)
     }
   };
 
@@ -153,22 +170,32 @@ const handleImageUpload = async(e) => {
         <form onSubmit={handleSubmit} className="space-y-2 text-sm">
 
             <div className="w-full flex flex-col items-center justify-center gap-3 border border-gray-300 p-4 rounded-lg">
-            <label className="text-sm font-medium text-gray-700">Profile Picture</label>
+                <label className="text-sm font-medium text-gray-700">Profile Picture</label>
 
-            {/* Image Preview */}
-            {imageURL && <img src={imageURL} className="w-24 h-24 object-cover rounded-full shadow-md" alt="Uploaded" style={{ width: 100 }} />}
-            
-            {/* File Input */}
-            <label className="cursor-pointer bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-blue-700 transition">
-                Choose Image
-                <input 
-                type="file" 
-                accept="image/*" 
-                className="hidden"
-                onChange={handleImageUpload}
-                />
-            </label>
+                {/* Image Preview */}
+                {imageURL && <img src={imageURL} className="w-24 h-24 object-cover rounded-full shadow-md" alt="Uploaded" style={{ width: 100 }} />}
+                
+                {/* File Input */}
+                <label className="cursor-pointer bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-blue-700 transition">
+                    Choose Image
+                    <input 
+                    type="file" 
+                    accept="image/*" 
+                    className="hidden"
+                    onChange={handleImageUpload}
+                    />
+                </label>
             </div>
+
+            <input 
+            type="text" 
+            className="border text-sm rounded-lg p-2 w-full" 
+            name="username" 
+            value={formData.username} 
+            placeholder="Create a username" 
+            onChange={handleChange} 
+            
+        />
 
         
           <div className="flex gap-2 flex-col md:flex-row">
@@ -193,6 +220,7 @@ const handleImageUpload = async(e) => {
             />
           </div>
 
+          
           <input 
             type="text" 
             className="border text-sm rounded-lg p-2 w-full" 
@@ -248,10 +276,11 @@ const handleImageUpload = async(e) => {
                 </div>
                 <input
                     type='text'
+                    name={key}
                     value={formData.socialMediaLinks[index]?.url || ""}
                     className="border h-10 text-sm rounded-r-lg p-2 w-full" 
                     placeholder='Insert link'    
-                    onChange={(e) => handleSocialMediaLinkChange(index, e.target.value)}    
+                    onChange={(e) => handleSocialMediaLinkChange(index, key, e.target.value)}    
                 />
                 </div>
             ))}
@@ -290,8 +319,8 @@ const handleImageUpload = async(e) => {
             Add another link
           </button>
 
-          <button type="submit" className="w-full py-3 bg-blue-600 text-white font-bold rounded-lg hover:shadow-md">
-            Create Account
+          <button type="submit" disabled={loading} className="w-full py-3 bg-blue-600 text-white font-bold rounded-lg hover:shadow-md">
+            {loading ? "Creating acccount..." : "Create Account"}
           </button>
         </form>
       </div>

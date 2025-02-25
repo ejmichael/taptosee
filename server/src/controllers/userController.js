@@ -12,7 +12,7 @@ const createUser = async (req, res) => {
     try {
 
         // Destructure fields from req.body (after multer has parsed the form data)
-        const { firstName, surname, emailAddress, phoneNumber, profilePicture, password, bio, links, socialMediaLinks } = req.body;
+        const { firstName, surname, username, emailAddress, phoneNumber, profilePicture, password, bio, links, socialMediaLinks } = req.body;
 
 
         // Check required fields
@@ -36,6 +36,7 @@ const createUser = async (req, res) => {
         const newUser = new User({
             firstName,
             surname,
+            username,
             emailAddress,
             password: hashedPW,
             phoneNumber,
@@ -59,9 +60,9 @@ const createUser = async (req, res) => {
 
   
 const getUserData = async (req, res) => {
-    const { userId } = req.params;
+    const { username } = req.params;
     
-    const user = await User.findById(userId)
+    const user = await User.findOne({ username: username })
 
     if(!user){
         res.status(400).json({ message: 'User not found' });
