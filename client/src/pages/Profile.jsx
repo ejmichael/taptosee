@@ -7,6 +7,9 @@ import axios from "axios";
 const Profile = () => {
   const { username } = useParams();
 
+  console.log(username);
+  
+
   const domain = window.location.href.includes('localhost') ? "http://localhost:5000" : "https://taptosee-backend.onrender.com";
 
     const [userData, setUserData] = useState(null)

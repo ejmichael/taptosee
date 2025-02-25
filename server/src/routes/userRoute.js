@@ -4,7 +4,7 @@ const { getUserData, createUser, userLogin } = require('../controllers/userContr
 
 const userRoute = express.Router();
 
-userRoute.get('/get-user-data/:userId', getUserData)
+userRoute.get('/get-user-data/:username', getUserData)
 userRoute.post('/create-user', createUser)
 userRoute.post('/user-login', userLogin)
 

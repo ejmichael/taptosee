@@ -61,6 +61,9 @@ const createUser = async (req, res) => {
   
 const getUserData = async (req, res) => {
     const { username } = req.params;
+
+    console.log(username);
+    
     
     const user = await User.findOne({ username: username })
 
