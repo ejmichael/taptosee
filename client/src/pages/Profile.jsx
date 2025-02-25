@@ -5,7 +5,7 @@ import { FaSquareXTwitter, FaTiktok, FaFacebook   } from "react-icons/fa6";
 import axios from "axios";
 
 const Profile = () => {
-  const { userId } = useParams();
+  const { username } = useParams();
 
   const domain = window.location.href.includes('localhost') ? "http://localhost:5000" : "https://taptosee-backend.onrender.com";
 
@@ -34,7 +34,7 @@ useEffect(() => {
     const getProfileData = async () => {
 
         try {
-            const profileData = await axios.get(domain + '/api/user/get-user-data/' + userId)
+            const profileData = await axios.get(domain + '/api/user/get-user-data/' + username)
             console.log(profileData.data);
             
             setUserData(profileData.data.user)

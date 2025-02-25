@@ -11,7 +11,7 @@ function App() {
       <Routes>
         <Route exact path='/' element={<Home/>}/>
         <Route path='/:userId' element={<Profile/>}/>
-        <Route path='/dashboard/:userId' element={<Dashboard/>}/>
+        <Route path='/dashboard/:username' element={<Dashboard/>}/>
         <Route path='/auth/register' element={<Register/>}/>
         <Route path='/auth/login' element={<Dashboard/>}/>
       </Routes>
