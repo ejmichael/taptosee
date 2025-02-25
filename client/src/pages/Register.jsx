@@ -23,7 +23,7 @@ const Register = () => {
       
   
 
-  const domain = window.location.href.includes('localhost') ? "http://localhost:5000" : "";
+  const domain = window.location.href.includes('localhost') ? "http://localhost:5000" : "https://taptosee-backend.onrender.com";
 
   const [formData, setFormData] = useState({
     firstName: '',
