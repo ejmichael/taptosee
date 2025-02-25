@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { FaYoutube, FaInstagram , FaLinkedin, FaGlobe } from "react-icons/fa";
-import { FaSquareXTwitter, FaTiktok, FaFacebook   } from "react-icons/fa6";
+import { FaSquareXTwitter, FaTiktok, FaFacebook, FaCopy   } from "react-icons/fa6";
 import axios from "axios";
 
 const Profile = () => {
   const { username } = useParams();
+  const [copySuccess, setCopySuccess] = useState(false);
 
   console.log(username);
   
@@ -51,6 +52,20 @@ useEffect(() => {
 
 }, [username])
 
+const copyToClipboard = () => {
+    // Use the Clipboard API to copy the link
+    navigator.clipboard
+    .writeText(window.location.href) // Copy current URL
+    .then(() => {
+      setCopySuccess(true);
+      // Reset copy success after 2 seconds
+      setTimeout(() => setCopySuccess(false), 2000);
+    })
+    .catch((error) => {
+      console.error("Failed to copy the URL: ", error);
+    });
+}
+
 
   // Icon Mapping
   const iconMap = {
@@ -65,8 +80,21 @@ useEffect(() => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b flex flex-col from-blue-600 to-purple-700 flex justify-center items-center px-4">
-      <div className="w-full h-[95vh] md:h-[65vh] flex flex-col md:max-w-md bg-white shadow-lg rounded-xl p-8 text-center">
-        
+      <div className="relative w-full h-[95vh] md:h-[65vh] flex flex-col md:max-w-md bg-white shadow-lg rounded-xl p-8 text-center">
+        <div className="absolute top-2 right-2 w-full flex justify-end">
+            <div className="absolute flex flex-col">
+                <button
+                className=" top-4 left-4 text-slate-400 p-2 rounded-full"
+                onClick={copyToClipboard}
+                title="Copy Profile URL"
+                >
+                <FaCopy />
+                </button>
+                {copySuccess && (
+                <span className=" top-4 left-4 text-slate-500 text-xs">Copied!</span>
+                )} 
+            </div>
+        </div>
         {/* Profile Header */}
         <div className="text-center md:my-5 my-10">
           <img
