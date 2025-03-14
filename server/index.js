@@ -10,9 +10,18 @@ const app = express();
 
 connectToMongoDB();
 
+// app.use(cors({ 
+//     origin: "http://localhost:3000"
+//   }));
+  app.use(cors({ 
+      origin: "https://taptosee-backend.onrender.com"
+  }));
+
 app.use(express.json());
 app.use(cors())
 app.use(express.urlencoded({ extended: false }));
+
+
 
 // Routes
 app.get('/', (req, res) => {
