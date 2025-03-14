@@ -50,11 +50,11 @@ const createUser = async (req, res) => {
         await newUser.save();
 
         // Send the response after successful registration
-        res.status(201).json({ message: 'User registered successfully', user: newUser });
+        return res.status(201).json({ message: 'User registered successfully', user: newUser });
 
     } catch (error) {
         console.error('Error during user registration:', error);
-        res.status(500).json({ message: 'Internal server error' });
+        return res.status(500).json({ message: 'Internal server error' });
     }
 };
 
@@ -68,10 +68,10 @@ const getUserData = async (req, res) => {
     const user = await User.findOne({ username: username })
 
     if(!user){
-        res.status(400).json({ message: 'User not found' });
+        return res.status(400).json({ message: 'User not found' });
     }
     
-    res.status(201).json({ message: 'Retrieved User data successfully', user })
+    return res.status(201).json({ message: 'Retrieved User data successfully', user })
 }
 
 const userLogin = async(req, res) => {
@@ -81,7 +81,7 @@ const userLogin = async(req, res) => {
 
     if(!user) {
         // Incorrect credentials
-        res.status(400).json({ message: 'User not found' });
+        return res.status(400).json({ message: 'User not found' });
     }
 
     if(user && (await bcrypt.compare(password, user.password))) {
@@ -96,7 +96,7 @@ const userLogin = async(req, res) => {
 
     if(!(await bcrypt.compare(password, user.password))) {
         // Incorrect credentials
-        res.status(400).json({ message: 'Invalid user credentials' });
+        return res.status(400).json({ message: 'Invalid user credentials' });
     }
 }
 
