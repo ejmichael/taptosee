@@ -14,7 +14,7 @@ connectToMongoDB();
 //     origin: "http://localhost:3000"
 //   }));
   app.use(cors({ 
-      origin: "https://taptosee-backend.onrender.com"
+      origin: "https://taptosee.com"
   }));
 
 app.use(express.json());
