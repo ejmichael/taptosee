@@ -116,5 +116,5 @@ module.exports = {
     userLogin,
     createUser,
     getUserData,
-    linkClick
+
 }
