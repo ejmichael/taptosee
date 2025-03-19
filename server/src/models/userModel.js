@@ -34,6 +34,7 @@ const userSchema = mongoose.Schema({
     password: {
         type: String,
     },
+    clickCount: { type: Number, default: 0 },
     links: [
         {
           title: { type: String, required: true },

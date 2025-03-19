@@ -58,6 +58,7 @@ const createUser = async (req, res) => {
     }
 };
 
+
   
 const getUserData = async (req, res) => {
     const { username } = req.params;
@@ -70,6 +71,10 @@ const getUserData = async (req, res) => {
     if(!user){
         return res.status(400).json({ message: 'User not found' });
     }
+
+    user.clickCount = (user.clickCount || 0) + 1;
+
+    await user.save();
     
     return res.status(201).json({ message: 'Retrieved User data successfully', user })
 }
@@ -110,5 +115,6 @@ const generateToken = (id) => {
 module.exports = {
     userLogin,
     createUser,
-    getUserData
+    getUserData,
+    linkClick
 }
