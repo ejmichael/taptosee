@@ -1,10 +1,10 @@
 import './App.css';
-import { Routes, Route, Link } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import Home from './pages/Home';
 import Profile from './pages/Profile';
 import Dashboard from './pages/Dashboard';
 import Register from './pages/Register';
-import Navbar from './components/Navbar';
+//import Navbar from './components/Navbar';
 function App() {
   return (
     <div className="App text-2xl">
