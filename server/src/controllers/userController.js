@@ -93,6 +93,7 @@ const userLogin = async(req, res) => {
         res.status(200).json({
             _id: user.id,
             name: user.name,
+            username: user.username,
             surname: user.surname,
             email: user.email,
             token: generateToken(user._id),

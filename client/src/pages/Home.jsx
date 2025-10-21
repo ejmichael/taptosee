@@ -133,7 +133,7 @@ export default function Home() {
         <div className="p-8 bg-white rounded-2xl shadow-xl">
           <h3 className="text-2xl font-bold mb-4">Unlimited Plan</h3>
           <p className="text-gray-700 mb-6">All features included: full customization, analytics, priority support, and more.</p>
-          <span className="text-4xl font-extrabold text-blue-800 mb-10 block">only R 48.99/month</span>
+          <span className="text-4xl font-extrabold text-blue-800 mb-10 block">only R39.90/month</span>
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Link to="/auth/register" className="bg-gradient-to-r from-blue-500 to-purple-600 text-white text-lg px-10 py-4 mt-10 rounded-xl font-bold shadow-lg hover:opacity-90 transition-all">
               Join Now

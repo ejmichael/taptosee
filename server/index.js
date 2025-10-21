@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const userRoute = require('./src/routes/userRoute');
 const dotenv = require('dotenv').config();
-const connectToMongoDB = require('./db.js');
+const connectToMongoDB = require('./db.js'); 
 
 
 const app = express();

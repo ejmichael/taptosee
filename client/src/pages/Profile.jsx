@@ -3,17 +3,20 @@ import { Link, useParams } from "react-router-dom";
 import { FaYoutube, FaInstagram , FaLinkedin, FaGlobe } from "react-icons/fa";
 import { FaSquareXTwitter, FaTiktok, FaFacebook, FaCopy   } from "react-icons/fa6";
 import axios from "axios";
+import { useAuthContext } from "../hooks/useAuthContext";
+
 
 const Profile = () => {
   const { username } = useParams();
   const [copySuccess, setCopySuccess] = useState(false);
+  const { user } = useAuthContext()
 
-  console.log(username);
+  console.log(user);
   
 
   const domain = window.location.href.includes('localhost') ? "http://localhost:5000" : "https://taptosee-backend.onrender.com";
 
-    const [userData, setUserData] = useState(null)
+  const [userData, setUserData] = useState(null)
 
 //   const user = {
 //     name: "Miranda Leigh Ghidari",

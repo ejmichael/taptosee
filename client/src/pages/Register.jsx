@@ -3,10 +3,12 @@ import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FaYoutube, FaInstagram , FaLinkedin, FaGlobe } from "react-icons/fa";
 import { FaSquareXTwitter, FaTiktok, FaFacebook   } from "react-icons/fa6";
+import  {useAuthContext} from '../hooks/useAuthContext'
 
 const Register = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const {dispatch} = useAuthContext()
 
   const [profilePicture, setProfilePicture] = useState(null);
   const [imageURL, setImageURL] = useState("");
@@ -142,13 +144,14 @@ const handleImageUpload = async(e) => {
     
   
     try {
-      const response = await axios.post(domain + '/api/user/create-user', requestData, {
+      const response = await axios.post(domain + '/api/user/create-user', requestData, { 
         headers: { 'Content-Type': 'application/json' },
       });
 
       localStorage.setItem('user', JSON.stringify(response.data.user));
     //   navigate(redirectPath, { replace: true });
       if(response.data.user) {
+        dispatch({ type: 'REGISTER', payload: response.data.user });
         navigate('/'+ response.data.user.username)
       }
 
@@ -164,7 +167,7 @@ const handleImageUpload = async(e) => {
     <div className='w-full  bg-gradient-to-b from-indigo-600 to-purple-700 py-12'>
       <div className="max-w-lg mx-auto flex-col shadow-lg rounded-xl w-[90%] md:w-[50%] p-6 bg-white">
         <div className="flex items-center gap-2 justify-center mb-4">
-          <span className='font-semibold text-3xl text-gradient-to-r from-pink-500 to-yellow-400'>Create an Account</span>
+          <span className='font-semibold text-3xl text-gradient-to-r from-pink-500 to-yellow-400'>Create Your Page</span>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-2 text-sm">
