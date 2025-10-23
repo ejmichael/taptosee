@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { useAuthContext } from '../hooks/useAuthContext'
 import { Link, useNavigate } from 'react-router-dom'
 import { FaChartBar, FaLink, FaCog, FaUser } from "react-icons/fa";
+import Navbar from '../components/Navbar';
 
 const Dashboard = () => {
 
@@ -11,13 +12,15 @@ const Dashboard = () => {
 
     useEffect(() => {
     if (!user) {
-      navigate('/auth/register') // or '/login', depending on your flow
+      navigate('/auth/login') // or '/login', depending on your flow
     }
   }, [user])
 
   return (
+    <>
+    <Navbar/>
     <div className="min-h-screen flex bg-gray-50">
-
+      
       {/* Sidebar */}
       <aside className="w-64 bg-white shadow-lg p-6 hidden md:flex flex-col">
         <div className="flex flex-col items-center text-center">
@@ -82,6 +85,9 @@ const Dashboard = () => {
         </div>
       </main>
     </div>
+
+    </>
+
   )
 }
 

@@ -12,7 +12,7 @@ const createUser = async (req, res) => {
     try {
 
         // Destructure fields from req.body (after multer has parsed the form data)
-        const { firstName, surname, username, emailAddress, phoneNumber, profilePicture, password, bio, links, socialMediaLinks } = req.body;
+        const { firstName, surname, username, emailAddress, phoneNumber, profilePicture, password, bio, links, socialMediaLinks, template } = req.body;
 
 
         // Check required fields
@@ -44,6 +44,7 @@ const createUser = async (req, res) => {
             profilePicture,
             links,  // Parse links array
             socialMediaLinks,  // Parse social media links
+            template
         });
 
         // Save user to the database
@@ -80,9 +81,11 @@ const getUserData = async (req, res) => {
 }
 
 const userLogin = async(req, res) => {
-    const { email, password } = req.body;
+    const { emailAddress, password } = req.body;
 
-    const user = await User.findOne({ email });
+    console.log(req.body)
+
+    const user = await User.findOne({ emailAddress });
 
     if(!user) {
         // Incorrect credentials
@@ -90,13 +93,18 @@ const userLogin = async(req, res) => {
     }
 
     if(user && (await bcrypt.compare(password, user.password))) {
-        res.status(200).json({
+        res.status(201).json({
             _id: user.id,
             name: user.name,
             username: user.username,
             surname: user.surname,
-            email: user.email,
+            emailAddress: user.emailAddress,
             token: generateToken(user._id),
+            isAdmin: user.isAdmin,
+            links: user.links,
+            profilePicture: user.profilePicture,
+            socilaMediaLinks: user.socialMediaLinks,
+            template: user.template
         })
     }
 
