@@ -1,129 +1,89 @@
-const express = require('express');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const User = require('../models/userModel') 
+import User from '../models/User.js'
+import Link from '../models/Link.js'
+import SocialLink from '../models/SocialLink.js'
+import cloudinary from '../config/cloudinary.js'
 
+// GET /api/v1/users/:username  (public)
+export const getPublicProfile = async (req, res) => {
+  const user = await User.findOne({
+    username: req.params.username.toLowerCase(),
+    isActive: true,
+  }).select('-password -emailVerifyToken -resetPasswordToken -emailVerifyExpires -resetPasswordExpires -phoneNumber')
 
+  if (!user) return res.status(404).json({ message: 'Profile not found' })
 
+  const [links, socials] = await Promise.all([
+    Link.find({ userId: user._id, isActive: true }).sort({ order: 1 }),
+    SocialLink.find({ userId: user._id }).sort({ order: 1 }),
+  ])
 
-
-// Create User
-const createUser = async (req, res) => {
-    try {
-
-        // Destructure fields from req.body (after multer has parsed the form data)
-        const { firstName, surname, username, emailAddress, phoneNumber, profilePicture, password, bio, links, socialMediaLinks, template } = req.body;
-
-
-        // Check required fields
-        if (!firstName || !surname || !emailAddress || !phoneNumber || !password) {
-            return res.status(400).json({ message: 'Please enter all the required fields.' });
-        }
-
-
-        // Check if user already exists
-        const userExists = await User.findOne({ email: emailAddress });
-
-        if (userExists) {
-            return res.status(400).json({ message: 'User already exists!' });
-        }
-
-        // Hash password
-        const salt = await bcrypt.genSalt(10);
-        const hashedPW = await bcrypt.hash(password, salt);
-
-        // Create new user object
-        const newUser = new User({
-            firstName,
-            surname,
-            username,
-            emailAddress,
-            password: hashedPW,
-            phoneNumber,
-            bio,
-            profilePicture,
-            links,  // Parse links array
-            socialMediaLinks,  // Parse social media links
-            template
-        });
-
-        // Save user to the database
-        await newUser.save();
-
-        // Send the response after successful registration
-        return res.status(201).json({ message: 'User registered successfully', user: newUser });
-
-    } catch (error) {
-        console.error('Error during user registration:', error);
-        return res.status(500).json({ message: 'Internal server error' });
-    }
-};
-
-
-  
-const getUserData = async (req, res) => {
-    const { username } = req.params;
-
-    console.log(username);
-    
-    
-    const user = await User.findOne({ username: username })
-
-    if(!user){
-        return res.status(400).json({ message: 'User not found' });
-    }
-
-    user.clickCount = (user.clickCount || 0) + 1;
-
-    await user.save();
-    
-    return res.status(201).json({ message: 'Retrieved User data successfully', user })
+  res.json({ user, links, socials })
 }
 
-const userLogin = async(req, res) => {
-    const { emailAddress, password } = req.body;
+// PUT /api/v1/users/profile
+export const updateProfile = async (req, res) => {
+  const { displayName, bio, template, customColors } = req.body
+  const user = req.user
 
-    console.log(req.body)
+  if (displayName !== undefined) user.displayName = displayName
+  if (bio !== undefined) user.bio = bio
+  if (template !== undefined) user.template = template
+  if (customColors !== undefined) user.customColors = { ...user.customColors?.toObject?.() || {}, ...customColors }
 
-    const user = await User.findOne({ emailAddress });
-
-    if(!user) {
-        // Incorrect credentials
-        return res.status(400).json({ message: 'User not found' });
+  if (req.file?.path) {
+    if (user.profilePicture) {
+      const parts = user.profilePicture.split('/')
+      const publicId = `profile_pictures/${parts[parts.length - 1].split('.')[0]}`
+      await cloudinary.uploader.destroy(publicId).catch(() => {})
     }
+    user.profilePicture = req.file.path
+  }
 
-    if(user && (await bcrypt.compare(password, user.password))) {
-        res.status(201).json({
-            _id: user.id,
-            name: user.name,
-            username: user.username,
-            surname: user.surname,
-            emailAddress: user.emailAddress,
-            token: generateToken(user._id),
-            isAdmin: user.isAdmin,
-            links: user.links,
-            profilePicture: user.profilePicture,
-            socilaMediaLinks: user.socialMediaLinks,
-            template: user.template
-        })
-    }
-
-    if(!(await bcrypt.compare(password, user.password))) {
-        // Incorrect credentials
-        return res.status(400).json({ message: 'Invalid user credentials' });
-    }
+  await user.save()
+  res.json({ user: sanitizeUser(user) })
 }
 
-//generate token 
-const generateToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET, {
-        expiresIn: '30d',
-    })
+// PUT /api/v1/users/username
+export const updateUsername = async (req, res) => {
+  const { username } = req.body
+  const taken = await User.findOne({ username: username.toLowerCase(), _id: { $ne: req.user._id } })
+  if (taken) return res.status(409).json({ message: 'Username already taken' })
+
+  req.user.username = username.toLowerCase()
+  await req.user.save()
+  res.json({ username: req.user.username })
 }
 
-module.exports = {
-    userLogin,
-    createUser,
-    getUserData,
+// DELETE /api/v1/users/account
+export const deleteAccount = async (req, res) => {
+  const { password } = req.body
+  const user = await User.findById(req.user._id)
 
+  const match = await user.matchPassword(password)
+  if (!match) return res.status(401).json({ message: 'Incorrect password' })
+
+  await Promise.all([
+    Link.deleteMany({ userId: user._id }),
+    SocialLink.deleteMany({ userId: user._id }),
+    User.findByIdAndDelete(user._id),
+  ])
+
+  res.clearCookie('token')
+  res.json({ message: 'Account deleted' })
 }
+
+const sanitizeUser = (user) => ({
+  _id: user._id,
+  username: user.username,
+  emailAddress: user.emailAddress,
+  displayName: user.displayName,
+  firstName: user.firstName,
+  surname: user.surname,
+  bio: user.bio,
+  profilePicture: user.profilePicture,
+  template: user.template,
+  customColors: user.customColors,
+  isAdmin: user.isAdmin,
+  isVerified: user.isVerified,
+  createdAt: user.createdAt,
+})
