@@ -149,3 +149,17 @@
     gap: 0.25rem;
   }
 }
+
+/* ─── Orbit animation keyframes ─────────────────────────────────────────────── */
+@keyframes orbit-cw  { to { transform: rotate(360deg);  } }
+@keyframes orbit-ccw { to { transform: rotate(-360deg); } }
+@keyframes chip-cw   { to { transform: rotate(360deg);  } }
+@keyframes chip-ccw  { to { transform: rotate(-360deg); } }
+
+/* ─── Orbit responsive scale ─────────────────────────────────────────────────
+   The orbit-wrap is always 740×740 px; --orbit-s scales it proportionally
+   so it fits the hero section at every desktop breakpoint.               */
+/* Desktop orbit only — mobile orbit uses fixed pixel positions, no scale */
+@media (min-width: 768px)  { .orbit-wrap { --orbit-s: 0.74; } }
+@media (min-width: 1024px) { .orbit-wrap { --orbit-s: 0.88; } }
+@media (min-width: 1280px) { .orbit-wrap { --orbit-s: 1;    } }

@@ -1,5 +1,10 @@
 import { Link } from 'react-router-dom'
 import { FiArrowRight, FiLink, FiBarChart2, FiLayout, FiGlobe, FiCheck, FiZap } from 'react-icons/fi'
+import {
+  FaInstagram, FaYoutube, FaLinkedin, FaFacebook, FaTiktok,
+  FaGithub, FaTwitch, FaDiscord, FaPinterest, FaRedditAlien, FaWhatsapp,
+} from 'react-icons/fa'
+import { FaSquareXTwitter } from 'react-icons/fa6'
 import Navbar from '../components/Navbar.jsx'
 
 const features = [
@@ -51,14 +56,187 @@ const steps = [
   { n: '03', title: 'Share one URL', desc: 'Post taptosee.me/yourname everywhere. One link. All your content.' },
 ]
 
+// ── Orbit data ────────────────────────────────────────────────────────────────
+// orbit-wrap: 940×940, center at (470,470), chip: 44×44 (half=22)
+// position formula: left = 470 + R*cos(deg°) - 22, top = 470 + R*sin(deg°) - 22
+// Inner R=180, Mid R=295, Outer R=415
+
+const innerIcons = [
+  { l: 628, t: 448, content: '🔗' },
+  { l: 448, t: 628, content: '📊' },
+  { l: 268, t: 448, content: '✨' },
+  { l: 448, t: 268, content: '🎨' },
+]
+
+const midIcons = [
+  { l: 657, t: 657, Icon: FaInstagram,      color: '#E4405F' },
+  { l: 239, t: 657, Icon: FaSquareXTwitter, color: '#000000' },
+  { l: 239, t: 239, Icon: FaYoutube,        color: '#FF0000' },
+  { l: 657, t: 239, Icon: FaLinkedin,       color: '#0A66C2' },
+]
+
+const outerIcons = [
+  { l: 863, t: 448, Icon: FaGithub,       color: '#181717' },
+  { l: 741, t: 741, Icon: FaTwitch,       color: '#9146FF' },
+  { l: 448, t: 863, Icon: FaDiscord,      color: '#5865F2' },
+  { l: 155, t: 741, Icon: FaTiktok,       color: '#010101' },
+  { l:  33, t: 448, Icon: FaFacebook,     color: '#1877F2' },
+  { l: 155, t: 155, Icon: FaRedditAlien,  color: '#FF4500' },
+  { l: 448, t:  33, Icon: FaWhatsapp,     color: '#25D366' },
+  { l: 741, t: 155, Icon: FaPinterest,    color: '#E60023' },
+]
+
+const ringBase = {
+  position: 'absolute', top: '50%', left: '50%',
+  transform: 'translate(-50%, -50%)',
+  borderRadius: '50%',
+  border: '1px solid color-mix(in srgb, var(--color-text) 12%, transparent)',
+  pointerEvents: 'none',
+}
+
+const trackBase = {
+  position: 'absolute', top: 0, left: 0, width: 940, height: 940,
+}
+
+// ── Mobile orbit data ─────────────────────────────────────────────────────────
+// orbit-wrap: 900×900, center at (450,450)
+// Inner R=165 — just wraps the hero text on a 375px screen
+// Mid   R=260 — some icons visible at edges
+// Outer R=350 — icons mostly off-screen, peek in from top/bottom
+
+const mobileInnerIcons = [
+  { l: 593, t: 428, content: '🔗' },
+  { l: 428, t: 593, content: '📊' },
+  { l: 263, t: 428, content: '✨' },
+  { l: 428, t: 263, content: '🎨' },
+]
+
+const mobileMidIcons = [
+  { l: 612, t: 612, Icon: FaInstagram,      color: '#E4405F' },
+  { l: 244, t: 612, Icon: FaSquareXTwitter, color: '#000000' },
+  { l: 244, t: 244, Icon: FaYoutube,        color: '#FF0000' },
+  { l: 612, t: 244, Icon: FaLinkedin,       color: '#0A66C2' },
+]
+
+const mobileOuterIcons = [
+  { l: 778, t: 428, Icon: FaGithub,      color: '#181717' },
+  { l: 676, t: 676, Icon: FaTwitch,      color: '#9146FF' },
+  { l: 428, t: 778, Icon: FaDiscord,     color: '#5865F2' },
+  { l: 180, t: 676, Icon: FaTiktok,      color: '#010101' },
+  { l:  78, t: 428, Icon: FaFacebook,    color: '#1877F2' },
+  { l: 180, t: 180, Icon: FaRedditAlien, color: '#FF4500' },
+  { l: 428, t:  78, Icon: FaWhatsapp,    color: '#25D366' },
+  { l: 676, t: 180, Icon: FaPinterest,   color: '#E60023' },
+]
+
+const mobileTrackBase = {
+  position: 'absolute', top: 0, left: 0, width: 900, height: 900,
+}
+
+const chipBase = {
+  position: 'absolute',
+  width: 44, height: 44,
+  borderRadius: 12,
+  background: 'var(--color-surface)',
+  border: '1px solid var(--color-border)',
+  boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+  display: 'flex', alignItems: 'center', justifyContent: 'center',
+}
+
 export default function Home() {
   return (
     <div className="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)]">
       <Navbar />
 
       {/* Hero */}
-      <section className="max-w-[1100px] mx-auto px-6 pt-20 pb-24">
-        <div className="max-w-[600px]">
+      <section className="relative overflow-hidden max-w-[1100px] mx-auto px-6 min-h-screen flex flex-col items-center justify-center py-24">
+
+        {/* ── Mobile orbit (< md) — fixed pixel positions, no CSS scale ───────── */}
+        <div className="md:hidden" aria-hidden="true"
+          style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+          <div style={{
+            position: 'absolute', top: '50%', left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 900, height: 900,
+          }}>
+            <div style={{
+              position: 'absolute', top: '50%', left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: 400, height: 400, borderRadius: '50%',
+              background: 'radial-gradient(circle, rgba(79,70,229,0.1) 0%, transparent 65%)',
+            }} />
+            <div style={{ ...ringBase, width: 330, height: 330 }} />
+            <div style={{ ...ringBase, width: 520, height: 520 }} />
+            <div style={{ ...ringBase, width: 700, height: 700 }} />
+
+            <div style={{ ...mobileTrackBase, animation: 'orbit-cw 26s linear infinite' }}>
+              {mobileInnerIcons.map(({ l, t, content }) => (
+                <div key={content} style={{ ...chipBase, left: l, top: t, animation: 'chip-ccw 26s linear infinite', fontSize: 20, lineHeight: 1 }}>
+                  {content}
+                </div>
+              ))}
+            </div>
+            <div style={{ ...mobileTrackBase, animation: 'orbit-ccw 38s linear infinite' }}>
+              {mobileMidIcons.map(({ l, t, Icon, color }, i) => (
+                <div key={i} style={{ ...chipBase, left: l, top: t, animation: 'chip-cw 38s linear infinite' }}>
+                  <Icon size={18} style={{ color }} />
+                </div>
+              ))}
+            </div>
+            <div style={{ ...mobileTrackBase, animation: 'orbit-cw 54s linear infinite' }}>
+              {mobileOuterIcons.map(({ l, t, Icon, color }, i) => (
+                <div key={i} style={{ ...chipBase, left: l, top: t, animation: 'chip-ccw 54s linear infinite' }}>
+                  <Icon size={18} style={{ color }} />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* ── Desktop orbit (md+) — scales via --orbit-s CSS variable ─────────── */}
+        <div className="hidden md:block" aria-hidden="true"
+          style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+          <div className="orbit-wrap" style={{
+            position: 'absolute', top: '50%', left: '50%',
+            transform: 'translate(-50%, -50%) scale(var(--orbit-s, 1))',
+            width: 940, height: 940,
+          }}>
+            <div style={{
+              position: 'absolute', top: '50%', left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: 620, height: 620, borderRadius: '50%',
+              background: 'radial-gradient(circle, rgba(79,70,229,0.1) 0%, transparent 65%)',
+            }} />
+            <div style={{ ...ringBase, width: 360, height: 360 }} />
+            <div style={{ ...ringBase, width: 590, height: 590 }} />
+            <div style={{ ...ringBase, width: 830, height: 830 }} />
+
+            <div style={{ ...trackBase, animation: 'orbit-cw 26s linear infinite' }}>
+              {innerIcons.map(({ l, t, content }) => (
+                <div key={content} style={{ ...chipBase, left: l, top: t, animation: 'chip-ccw 26s linear infinite', fontSize: 20, lineHeight: 1 }}>
+                  {content}
+                </div>
+              ))}
+            </div>
+            <div style={{ ...trackBase, animation: 'orbit-ccw 38s linear infinite' }}>
+              {midIcons.map(({ l, t, Icon, color }, i) => (
+                <div key={i} style={{ ...chipBase, left: l, top: t, animation: 'chip-cw 38s linear infinite' }}>
+                  <Icon size={18} style={{ color }} />
+                </div>
+              ))}
+            </div>
+            <div style={{ ...trackBase, animation: 'orbit-cw 54s linear infinite' }}>
+              {outerIcons.map(({ l, t, Icon, color }, i) => (
+                <div key={i} style={{ ...chipBase, left: l, top: t, animation: 'chip-ccw 54s linear infinite' }}>
+                  <Icon size={18} style={{ color }} />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Hero text */}
+        <div className="relative z-10 max-w-[600px] w-full text-center">
           <div className="inline-flex items-center gap-2 text-xs font-medium text-[var(--color-accent)] bg-[var(--color-accent-muted)] px-3 py-1.5 rounded-full mb-6">
             <FiZap size={11} />
             Free to start — no credit card
@@ -71,12 +249,12 @@ export default function Home() {
             </span>
           </h1>
 
-          <p className="text-lg text-[var(--color-muted)] leading-relaxed mb-10 max-w-[480px]">
+          <p className="text-lg text-[var(--color-muted)] leading-relaxed mb-10">
             Create a stunning link page in minutes. Share it everywhere.
             Track every click with real analytics.
           </p>
 
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-3 justify-center">
             <Link to="/auth/register"
               className="inline-flex items-center gap-2 bg-[var(--color-accent)] text-white px-6 h-12 rounded-[var(--radius-lg)] font-semibold text-sm hover:bg-[var(--color-accent-hover)] hover:-translate-y-px hover:shadow-md transition-all duration-150 active:scale-[0.98]">
               Create your page free <FiArrowRight size={15} />
@@ -92,26 +270,6 @@ export default function Home() {
           </p>
         </div>
 
-        {/* Mock profile card — right side on desktop, below on mobile */}
-        <div className="mt-16 md:mt-0 md:absolute md:right-[5%] md:top-[100px] pointer-events-none">
-          <div className="w-[220px] mx-auto md:mx-0 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-xl)] p-5 shadow-[0_8px_32px_rgba(0,0,0,0.08)]">
-            <div className="flex flex-col items-center gap-2 mb-4">
-              <div className="w-14 h-14 rounded-full bg-[var(--color-surface-raised)]" />
-              <div className="h-3 w-20 bg-[var(--color-surface-raised)] rounded-full" />
-              <div className="h-2 w-28 bg-[var(--color-border)] rounded-full" />
-            </div>
-            <div className="flex justify-center gap-2 mb-4">
-              {[...Array(4)].map((_, i) => (
-                <div key={i} className="w-7 h-7 rounded-full bg-[var(--color-surface-raised)]" />
-              ))}
-            </div>
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className={`h-10 rounded-[var(--radius-md)] mb-2 ${
-                i === 0 ? 'bg-[var(--color-accent)]' : 'bg-[var(--color-surface-raised)]'
-              }`} />
-            ))}
-          </div>
-        </div>
       </section>
 
       {/* Social proof */}
